@@ -66,6 +66,21 @@ public class IntListTest {
         assertEquals(IntList.of(1, 2, 3), A);
     }
 
+    @Test(timeout = 1000)
+    public void testreverse() {
+        // 测试列表是否反转
+        IntList A = IntList.of(1, 2, 3, 4, 5);
+        IntList reversedA = A.reverse();
+        IntList exp = IntList.of(5, 4, 3, 2, 1);
+        assertEquals(exp, reversedA);
+
+        // 测试函数是破坏性的
+        IntList originA = IntList.of(1, 2, 3, 4, 5); // 重新创建原始列表
+        IntList temp = originA.reverse();
+        assertNotEquals(originA, temp); // 确保反转后的列表与原始列表是不同的对象
+
+    }
+
     /** If you're running this from the command line, you'll need
       * to add a main method. See ArithmeticTest.java for an
       * example. */
