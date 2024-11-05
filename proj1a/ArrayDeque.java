@@ -12,19 +12,19 @@ public class ArrayDeque<T> {
         nextLast = 1;
     }
 
-    public int minusOne(int index) {
+    private int minusOne(int index) {
         return Math.floorMod(index - 1, items.length);
     }
 
-    public int plusOne(int index) {
+    private int plusOne(int index) {
         return Math.floorMod(index + 1, items.length);
     }
 
-    public int plusOne(int index, int length) {
+    private int plusOne(int index, int length) {
         return Math.floorMod(index + 1, length);
     }
 
-    public void resize() {
+    private void resize() {
         if (size == items.length) {
             resizeHelper(items.length * 2);
         }
@@ -35,13 +35,13 @@ public class ArrayDeque<T> {
 
     private void resizeHelper(int capacity) {
         T[] temp = items;
-        int begin = minusOne(nextLast);
-        int end = plusOne(nextFirst);
+        int begin = plusOne(nextFirst);
+        int end = minusOne(nextLast);
         items = (T[]) new Object[capacity];
         nextFirst = 0;
         nextLast = 1;
 
-        for (int i = begin; i != end; plusOne(begin)) {
+        for (int i = begin; i != end; i = plusOne(i, temp.length)) {
             items[nextLast] = temp[i];
             nextLast = plusOne(nextLast);
         }
@@ -104,5 +104,4 @@ public class ArrayDeque<T> {
         index = Math.floorMod(plusOne((nextFirst) + index), items.length);
         return items[index];
     }
-
 }
