@@ -1,89 +1,115 @@
-/** Performs some basic linked list tests. */
-public class LinkedListDequeTest {
-	/* Utility method for printing out empty checks. */
-	public static boolean checkEmpty(boolean expected, boolean actual) {
-		if (expected != actual) {
-			System.out.println("isEmpty() returned " + actual + ", but expected: " + expected);
-			return false;
-		}
-		return true;
-	}
+public class LinkedListDeque <T> {
+    private class TNode {
+        public T item;
+        public TNode prev;
+        public TNode next;
+        public TNode(T x, TNode p, TNode n) {
+            item = x;
+            prev = p;
+            next = n;
+        }
+    }
 
-	/* Utility method for printing out empty checks. */
-	public static boolean checkSize(int expected, int actual) {
-		if (expected != actual) {
-			System.out.println("size() returned " + actual + ", but expected: " + expected);
-			return false;
-		}
-		return true;
-	}
+    private TNode sentinel;
+    private int size;
 
-	/* Prints a nice message based on whether a test passed. 
-	 * The \n means newline. */
-	public static void printTestStatus(boolean passed) {
-		if (passed) {
-			System.out.println("Test passed!\n");
-		} else {
-			System.out.println("Test failed!\n");
-		}
-	}
+    public LinkedListDeque () {
+        sentinel = new TNode((T)"null", null, null);
+        sentinel.next = sentinel;
+        sentinel.prev = sentinel;
+        size = 0;
+    }
 
-	/** Adds a few things to the list, checking isEmpty() and size() are correct, 
-	  * finally printing the results. 
-	  *
-	  * && is the "and" operation. */
-	public static void addIsEmptySizeTest() {
-		System.out.println("Running add/isEmpty/Size test.");
+    public LinkedListDeque(T item) {
+        sentinel = new TNode((T)"null", null, null);
+        sentinel.next = new TNode(item, sentinel, sentinel);
+        sentinel.prev = sentinel.next;
+        size = 1;
+    }
 
-		LinkedListDeque<String> lld1 = new LinkedListDeque<String>();
+    public int size() {
+        return size;
+    }
 
-		boolean passed = checkEmpty(true, lld1.isEmpty());
+    public void addFirst(T item) {
+        sentinel.next = new TNode(item, sentinel, sentinel.next);
+        sentinel.next.next.prev = sentinel.next;
+        size += 1;
+    }
 
-		lld1.addFirst("front");
-		
-		// The && operator is the same as "and" in Python.
-		// It's a binary operator that returns true if both arguments true, and false otherwise.
-		passed = checkSize(1, lld1.size()) && passed;
-		passed = checkEmpty(false, lld1.isEmpty()) && passed;
+    public void addLast(T item) {
+        sentinel.prev = new TNode(item, sentinel.prev, sentinel);
+        sentinel.prev.prev.next = sentinel.prev;
+        size += 1;
+    }
 
-		lld1.addLast("middle");
-		passed = checkSize(2, lld1.size()) && passed;
+    public boolean isEmpty() {
+        if (0 == size) {
+            return true;
+        }
+        return false;
+    }
 
-		lld1.addLast("back");
-		passed = checkSize(3, lld1.size()) && passed;
+    public void printDeque() {
+        TNode ptr = sentinel;
+        while (ptr.next != sentinel) {
+            ptr = ptr.next;
+            System.out.print(ptr.item);
+            System.out.print(" ");
+        }
+        System.out.println();
 
-		System.out.println("Printing out deque: ");
-		lld1.printDeque();
+    }
 
-		printTestStatus(passed);
+    public T removeFirst() {
+        if (0 == size) {
+            return null;
+        }
+        size -= 1;
+        T res = sentinel.next.item;
+        sentinel.next = sentinel.next.next;
+        sentinel.next.prev = sentinel;
+        return res;
+    }
 
-	}
+    public T removeLast() {
+        if (0 == size) {
+            return null;
+        }
+        size -= 1;
+        T res = sentinel.prev.item;
+        sentinel.prev.prev.next = sentinel;
+        sentinel.prev = sentinel.prev.prev;
+        return res;
+    }
 
-	/** Adds an item, then removes an item, and ensures that dll is empty afterwards. */
-	public static void addRemoveTest() {
+    public T get(int index) {
+        int count = 0;
+        TNode ptr = sentinel;
+        while (ptr.next != sentinel) {
+            ptr = ptr.next;
+            if (count == index) {
+                return ptr.item;
+            }
+            count++;
+        }
+        return null;
+    }
 
-		System.out.println("Running add/remove test.");
+    public T getRecursiveHelper(int index, int count, TNode ptr) {
+        if (index == count) {
+            return ptr.item;
+        }
+        return getRecursiveHelper(index, count+1, ptr.next);
+    }
 
+    public T getRecursive(int index) {
+        if (index >= size || index < 0) {
+            return null;
+        }
+        int count = 0;
+        TNode ptr = sentinel.next;
+        return getRecursiveHelper(index, count, ptr);
+    }
 
-		LinkedListDeque<Integer> lld1 = new LinkedListDeque<Integer>();
-		// should be empty 
-		boolean passed = checkEmpty(true, lld1.isEmpty());
-
-		lld1.addFirst(10);
-		// should not be empty 
-		passed = checkEmpty(false, lld1.isEmpty()) && passed;
-
-		lld1.removeFirst();
-		// should be empty 
-		passed = checkEmpty(true, lld1.isEmpty()) && passed;
-
-		printTestStatus(passed);
-
-	}
-
-	public static void main(String[] args) {
-		System.out.println("Running tests.\n");
-		addIsEmptySizeTest();
-		addRemoveTest();
-	}
 }
