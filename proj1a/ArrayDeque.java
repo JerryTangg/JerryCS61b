@@ -80,6 +80,9 @@ public class ArrayDeque<T> {
     }
 
     public T removeFirst() {
+        if (size == 0) {
+            return null;
+        }
         resize();
         T rmv = items[plusOne(nextFirst)];
         nextFirst = plusOne((nextFirst));
@@ -89,6 +92,9 @@ public class ArrayDeque<T> {
     }
 
     public T removeLast() {
+        if (size == 0) {
+            return null;
+        }
         resize();
         T rmv = items[minusOne(nextLast)];
         nextLast = minusOne(nextLast);
@@ -104,4 +110,5 @@ public class ArrayDeque<T> {
         index = Math.floorMod(plusOne((nextFirst) + index), items.length);
         return items[index];
     }
+
 }
